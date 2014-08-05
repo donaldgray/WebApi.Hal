@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Web;
 using Newtonsoft.Json;
 
@@ -10,7 +11,6 @@ namespace WebApi.Hal.JsonConverters
     {
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            Type stringType = typeof(string);
             var links = new HashSet<Link>((IList<Link>)value, new LinkEqualityComparer());
 
             writer.WriteStartObject();
@@ -34,15 +34,8 @@ namespace WebApi.Hal.JsonConverters
                         writer.WriteValue(true);
                     }
 
-                    var properties = link.GetType()
-                        .GetProperties()
-                        .Where(x => !x.Name.Equals("Href") && !x.Name.Equals("IsTemplated") && !x.Name.Equals("Rel"));
-
-                    foreach (var info in properties)
+                    foreach (var info in GetLinkProperties())
                     {
-                        if ((info.PropertyType != stringType))
-                            continue; // no sensible way to serialize ...
-
                         var text = info.GetValue(link) as string;
 
                         if (string.IsNullOrEmpty(text))
@@ -81,5 +74,26 @@ namespace WebApi.Hal.JsonConverters
                 return HttpContext.Current != null ? VirtualPathUtility.ToAbsolute(href) : href.Replace("~/", "/");
             return href;
         }
+
+        static IList<PropertyInfo> _linkProperties;
+
+        static IEnumerable<PropertyInfo> GetLinkProperties()
+        {
+            if (_linkProperties == null)
+            {
+                Type stringType = typeof(string);
+                Type linkType = typeof (Link);
+                _linkProperties =
+                    linkType.GetProperties()
+                        .Where(
+                            pi =>
+                                !pi.Name.Equals("Href") && !pi.Name.Equals("IsTemplated") && !pi.Name.Equals("Rel") &&
+                                pi.PropertyType == stringType)
+                        .ToList();
+            }
+
+            return _linkProperties;
+        }
+
     }
 }
