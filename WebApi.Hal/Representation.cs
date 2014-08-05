@@ -77,8 +77,8 @@ namespace WebApi.Hal
         public void RepopulateHyperMedia()
         {
             CreateHypermedia();
-            if (Links.Count(l=>l.Rel == "self") == 0)
-                Links.Insert(0, new Link { Rel = "self", Href = Href });
+            if (Links.Count(l => l.Rel == ReservedProperties.Links.Self) == 0)
+                Links.Insert(0, new Link { Rel = ReservedProperties.Links.Self, Href = Href });
         }
 
         [JsonIgnore]

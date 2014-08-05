@@ -19,6 +19,12 @@ namespace WebApi.Hal
         public string Rel { get; set; }
         public string Href { get; set; }
         public string Title { get; set; }
+        public string Type { get; set; }
+        public string Deprecation { get; set; }
+        public string Name { get; set; }
+        public string Profile { get; set; }
+        public string HrefLang { get; set; }
+
         public bool IsTemplated
         {
             get { return !string.IsNullOrEmpty(Href) && IsTemplatedRegex.IsMatch(Href); }

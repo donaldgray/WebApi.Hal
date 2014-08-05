@@ -68,7 +68,7 @@ namespace WebApi.Hal.JsonConverters
             {
                 foreach (var rel in links.OfType<JProperty>())
                     CreateLinks(rel, resource);
-                var self = resource.Links.SingleOrDefault(l => l.Rel == "self");
+                var self = resource.Links.SingleOrDefault(l => l.Rel == ReservedProperties.Links.Self);
                 if (self != null)
                     resource.Href = self.Href;
             }
