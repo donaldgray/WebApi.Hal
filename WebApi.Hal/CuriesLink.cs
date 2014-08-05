@@ -29,7 +29,7 @@ namespace WebApi.Hal
 
         public Link GetLink()
         {
-            return new Link(CuriesRelExpression, Href) { Name = Name };
+            return new Link(ReservedProperties.Links.Curie, Href) { Name = Name };
         }
 
         public string CreateLinkRelation(string name)

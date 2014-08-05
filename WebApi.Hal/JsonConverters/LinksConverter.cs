@@ -10,6 +10,7 @@ namespace WebApi.Hal.JsonConverters
     {
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
+            Type stringType = typeof(string);
             var links = new HashSet<Link>((IList<Link>)value, new LinkEqualityComparer());
 
             writer.WriteStartObject();
@@ -31,6 +32,24 @@ namespace WebApi.Hal.JsonConverters
                     {
                         writer.WritePropertyName("templated");
                         writer.WriteValue(true);
+                    }
+
+                    var properties = link.GetType()
+                        .GetProperties()
+                        .Where(x => !x.Name.Equals("Href") && !x.Name.Equals("IsTemplated") && !x.Name.Equals("Rel"));
+
+                    foreach (var info in properties)
+                    {
+                        if ((info.PropertyType != stringType))
+                            continue; // no sensible way to serialize ...
+
+                        var text = info.GetValue(link) as string;
+
+                        if (string.IsNullOrEmpty(text))
+                            continue; // no value set, so don't serialize this ...
+
+                        writer.WritePropertyName(info.Name.ToLowerInvariant());
+                        writer.WriteValue(text);
                     }
 
                     writer.WriteEndObject();
