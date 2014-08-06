@@ -127,7 +127,7 @@ namespace WebApi.Hal
         {
             return new Link
             {
-                Rel = "curies",
+                Rel = ReservedProperties.Links.Curie,
                 Name = Name,
                 Href = Href
             };

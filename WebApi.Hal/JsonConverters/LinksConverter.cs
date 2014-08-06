@@ -19,7 +19,14 @@ namespace WebApi.Hal.JsonConverters
 
             foreach (var rel in lookup)
             {
-                writer.WritePropertyName(rel.Key);
+                var name = rel.Key;
+                // If there's 1 curie link have rel as 'curie', if multiple have 'curies'
+                if (name == ReservedProperties.Links.Curie && rel.Count() > 1)
+                {
+                    name = ReservedProperties.Links.Curies;
+                }
+
+                writer.WritePropertyName(name);
                 if (rel.Count() > 1)
                     writer.WriteStartArray();
                 foreach (var link in rel)

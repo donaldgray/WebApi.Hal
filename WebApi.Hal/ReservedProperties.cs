@@ -14,7 +14,9 @@
             // https://tools.ietf.org/html/draft-kelly-json-hal-06#section-8.1
             public const string Self = "self";
 
-            public const string Curie = "curies";
+            public const string Curies = "curies";
+
+            public const string Curie = "curie";
         }
     }
 }
